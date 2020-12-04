@@ -4,6 +4,7 @@ const moment = require('moment')
 const fs = require('fs')
 const stream = require('stream')
 const tmp = require('tmp');
+const ocr = require('./ocr')
 
 const app = express()
 const port = process.env.PORT || 5000
@@ -64,6 +65,9 @@ async function handleOcr() {
     const filepathOfImage = await base64StringToJpeg(jpegImageAsBase64String)
     console.log(filepathOfImage)
 
+    const values = await ocr.imageToText(filepathOfImage)
+    console.log(values)
+
   } catch (err) {
     console.log(err)
   }
@@ -88,7 +92,10 @@ async function base64StringToJpeg(base64String) {
     streamObj.push(null)
     streamObj.pipe(fs.createWriteStream(filename))
 
-    streamObj.on('end', () => resolve(filename))
+    streamObj.on('end', () => {
+      console.log('finish')
+      resolve(filename)
+    })
     streamObj.on('error', (err) => reject(err))
   })
 }

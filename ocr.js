@@ -1,28 +1,32 @@
 const path = require('path');
 const { createWorker, PSM } = require('tesseract.js')
 
-const worker = createWorker({
-    langPath: path.join(__dirname, '..', 'lang-data'),
-    logger: m => console.log(m),
-});
 
-export async function imageToText(filepath) {
-    await worker.load();
-    await worker.loadLanguage('deu');
-    await worker.initialize('deu');
-    await worker.setParameters({
-        tessedit_pageseg_mode: PSM.SINGLE_BLOCK_VERT_TEXT,
-    });
 
-    const values = [];
-    for (let i = 0; i < rectangles.length; i++) {
-        const { data: { text } } = await worker.recognize(filepath, { rectangle: rectangles[i] });
-        values.push(text);
+module.exports = {
+    imageToText: async function imageToText(filepath) {
+        const pathToTrainedData = path.join(__dirname, 'lang-data')
+        console.log(pathToTrainedData)
+
+        const worker = createWorker({
+            langPath: pathToTrainedData
+        });
+        await worker.load()
+        await worker.loadLanguage('deu')
+        await worker.initialize('deu')
+        await worker.setParameters({
+            tessedit_pageseg_mode: PSM.SINGLE_BLOCK_VERT_TEXT,
+        });
+
+        const values = []
+        for (let i = 0; i < rectangles.length; i++) {
+            const { data: { text } } = await worker.recognize(filepath, { rectangle: rectangles[i] })
+            console.log(text)
+            values.push(text)
+        }
+        await worker.terminate()
+        return values
     }
-
-    const { data: { text } } = await worker.recognize(filepath);
-    console.log(text);
-    await worker.terminate();
 }
 
 const heightStart = process.env.HEIGHT_START || 260
