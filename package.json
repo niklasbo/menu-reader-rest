@@ -1,7 +1,7 @@
 {
-  "name": "node-js-getting-started",
-  "version": "0.3.0",
-  "description": "A sample Node.js app using Express 4",
+  "name": "image-ocr-service",
+  "version": "1.0.0",
+  "description": "Menu Reader image to text service",
   "engines": {
     "node": "12.x"
   },
@@ -11,6 +11,7 @@
     "fs": "0.0.1-security",
     "moment": "^2.29.1",
     "mongoose": "^5.10.17",
+    "tesseract.js": "^2.1.4",
     "tmp": "^0.2.1"
   },
   "devDependencies": {
