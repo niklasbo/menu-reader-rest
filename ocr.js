@@ -7,11 +7,14 @@ module.exports = {
         console.log(pathToTrainedData)
 
         const worker = createWorker({
-            langPath: pathToTrainedData, //set for faster offline converting
+            langPath: pathToTrainedData, //set for offline converting
         });
         await worker.load()
         await worker.loadLanguage('deu')
         await worker.initialize('deu')
+        await worker.setParameters({
+            tessedit_char_whitelist: 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 äöüÄÖÜß-(),&€',
+        });
 
         const values = []
         for (let i = 0; i < rectangles.length; i++) {
