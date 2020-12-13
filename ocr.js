@@ -1,7 +1,5 @@
 const path = require('path');
-const { createWorker, PSM } = require('tesseract.js')
-
-
+const { createWorker } = require('tesseract.js')
 
 module.exports = {
     imageToText: async function imageToText(filepath) {
@@ -9,14 +7,11 @@ module.exports = {
         console.log(pathToTrainedData)
 
         const worker = createWorker({
-            langPath: pathToTrainedData
+            langPath: pathToTrainedData, //set for faster offline converting
         });
         await worker.load()
         await worker.loadLanguage('deu')
         await worker.initialize('deu')
-        await worker.setParameters({
-            tessedit_pageseg_mode: PSM.SINGLE_BLOCK_VERT_TEXT,
-        });
 
         const values = []
         for (let i = 0; i < rectangles.length; i++) {
@@ -33,15 +28,15 @@ const heightStart = process.env.HEIGHT_START || 260
 const heightEnd = process.env.HEIGTH_END || 1160
 
 const firstStart = process.env.FIRST_START || 240
-const firstEnd = process.env.FIRST_END || 550
-const secondStart = process.env.SECOND_START || firstEnd
-const secondEnd = process.env.SECOND_END || 870
-const thirdStart = process.env.THIRD_START || secondEnd
-const thirdEnd = process.env.THIRD_END || 1200
-const fourthStart = process.env.FOURTH_START || thirdEnd
-const fourthEnd = process.env.FOURTH_END || 1515
-const fifthStart = process.env.FIFTH_START || fourthEnd
-const fifthEnd = process.env.FIFTH_END || 1850
+const firstEnd = process.env.FIRST_END || 525
+const secondStart = process.env.SECOND_START || 570
+const secondEnd = process.env.SECOND_END || 845
+const thirdStart = process.env.THIRD_START || 890
+const thirdEnd = process.env.THIRD_END || 1170
+const fourthStart = process.env.FOURTH_START || 1210
+const fourthEnd = process.env.FOURTH_END || 1490
+const fifthStart = process.env.FIFTH_START || 1535
+const fifthEnd = process.env.FIFTH_END || 1785
 
 const rectangleHeight = heightEnd - heightStart;
 const rectangles = [
