@@ -19,7 +19,6 @@ module.exports = {
         const values = []
         for (let i = 0; i < rectangles.length; i++) {
             const { data: { text } } = await worker.recognize(filepath, { rectangle: rectangles[i] })
-            console.log(text)
             values.push(text)
         }
         await worker.terminate()

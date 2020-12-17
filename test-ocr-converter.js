@@ -1,80 +1,90 @@
 const test = require('ava')
-const { Meal } = require("./meal")
-const { ocrResultsToObjects } = require('./ocr-converter')
+const { Meal, Week, Day } = require("./models")
+const { ocrResultsToWeekDaysAndMeals } = require('./ocr-converter')
 
 test('test-one-day', t => {
-    t.deepEqual(ocrResultsToObjects(test_data_one_day),
-        [
-            new Meal('Aus der Kokotte Hackfleisch-Kartoffel-Auflauf mit Mozzarella', '4,50€', ['aw', 'uw', 'am', '23', 'bc'], ['Rind', 'Schwein']),
-            new Meal('Caponata di melanzane mit Auberginen-Tomatensauce mit Kapern, Rosinen, Oliven, Pinienkerne, Couscous & Joghurt', '4,00€ 2,40€', ['aw', 'uw', '2', '23', 'am', 'au'], ['Vegetarisch']),
-        ]
+    t.deepEqual(ocrResultsToWeekDaysAndMeals(50, test_data_one_day),
+        new Week(50, [
+            new Day('Montag', '07.12.2020',
+                [
+                    new Meal('Aus der Kokotte Hackfleisch-Kartoffel-Auflauf mit Mozzarella', '4,50€', ['aw', 'uw', 'am', '23', 'bc'], ['Rind', 'Schwein']),
+                    new Meal('Caponata di melanzane mit Auberginen-Tomatensauce mit Kapern, Rosinen, Oliven, Pinienkerne, Couscous & Joghurt', '4,00€ 2,40€', ['aw', 'uw', '2', '23', 'am', 'au'], ['Vegetarisch']),
+                ]),
+        ])
     )
 });
 
 test('test-one-week', async t => {
-    t.deepEqual(ocrResultsToObjects(test_data_week),
-        [
-            new Meal(
-                'Aus der Kokotte Hackfleisch-Kartoffel-Auflauf mit Mozzarella',
-                '4,50€',
-                ['aw', 'uw', 'am', '23', 'bc'],
-                ['Rind', 'Schwein']
-            ),
-            new Meal(
-                'Caponata di melanzane mit Auberginen-Tomatensauce mit Kapern, Rosinen, Oliven, Pinienkerne, Couscous & Joghurt',
-                '4,00€ 2,40€',
-                ['aw', 'uw', '2', '23', 'am', 'au'],
-                ['Vegetarisch']
-            ),
-            new Meal(
-                'Kartoffel-Lauch-Gulasch mit Ei frischem Lauch, Möhren, Kartoffeln und roten Zwiebeln',
-                '4,00€ 2,40€',
-                ['am', '23', 'bc'],
-                ['Vegetarisch']
-            ),
-            new Meal(
-                'Paniertes Seelachsfilet mit hausgemachtem Kartoffelpüree, Linsen-Brokkoligemüse & Joghurtdip',
-                '5,80€',
-                ['aw', 'uw', 'af', 'am', 'bm'],
-                ['Fisch']
-            ),
-            new Meal(
-                'Wildgulasch im Pilzrahmsauce dazu hausgemachter Apfelrotkohl und Spätzle',
-                '8,50€',
-                ['am', 'au', '2'],
-                ['Anderes Fleisch']
-            ),
-            new Meal(
-                'Vegane Mexikanische Chili-Linsen mit Paprika, Mais, Zwiebeln, schwarzen Bohnen und Vollkornreis',
-                '4,00€ 2,40€',
-                ['2', '23', 'bc'],
-                ['Vegan']
-            ),
-            new Meal(
-                'Gebratenes Putenschnitzel an Erbsen & Möhren in Petersilienrahm dazu Dampfkartoffeln',
-                '5,60€ 3,40€',
-                ['am', 'aw', 'uw'],
-                ['Geflügel']
-            ),
-            new Meal(
-                'Bunte Gnocchipfanne an fruchtiger Tomatensauce, Rucola, Kirschtomaten und Parmesan',
-                '4,50€',
-                ['am', 'ae', '2', 'aw', 'uw'],
-                ['Vegetarisch']
-            ),
-            new Meal(
-                'Gebratene Currywurst mit Pommes frites',
-                '3,50€ 2,10€',
-                [],
-                ['Schwein']
-            ),
-            new Meal(
-                'Farfalle an frischer Champignonsahnesauce, Parmesan und Salatbeilage',
-                '4,00€ 2,40€',
-                ['am', 'ae', '2', 'au'],
-                ['Vegetarisch']
-            ),
+    t.deepEqual(ocrResultsToWeekDaysAndMeals(50, test_data_week),
+        new Week(50, [
+            new Day('Montag', '07.12.2020',
+                [
+                    new Meal(
+                        'Aus der Kokotte Hackfleisch-Kartoffel-Auflauf mit Mozzarella',
+                        '4,50€',
+                        ['aw', 'uw', 'am', '23', 'bc'],
+                        ['Rind', 'Schwein']
+                    ),
+                    new Meal(
+                        'Caponata di melanzane mit Auberginen-Tomatensauce mit Kapern, Rosinen, Oliven, Pinienkerne, Couscous & Joghurt',
+                        '4,00€ 2,40€',
+                        ['aw', 'uw', '2', '23', 'am', 'au'],
+                        ['Vegetarisch']
+                    )]),
+            new Day('Dienstag', '08.12.2020', [
+                new Meal(
+                    'Kartoffel-Lauch-Gulasch mit Ei frischem Lauch, Möhren, Kartoffeln und roten Zwiebeln',
+                    '4,00€ 2,40€',
+                    ['am', '23', 'bc'],
+                    ['Vegetarisch']
+                ),
+                new Meal(
+                    'Paniertes Seelachsfilet mit hausgemachtem Kartoffelpüree, Linsen-Brokkoligemüse & Joghurtdip',
+                    '5,80€',
+                    ['aw', 'uw', 'af', 'am', 'bm'],
+                    ['Fisch']
+                )]),
+            new Day('Mittwoch', '09.12.2020', [
+                new Meal(
+                    'Wildgulasch im Pilzrahmsauce dazu hausgemachter Apfelrotkohl und Spätzle',
+                    '8,50€',
+                    ['am', 'au', '2'],
+                    ['Anderes Fleisch']
+                ),
+                new Meal(
+                    'Vegane Mexikanische Chili-Linsen mit Paprika, Mais, Zwiebeln, schwarzen Bohnen und Vollkornreis',
+                    '4,00€ 2,40€',
+                    ['2', '23', 'bc'],
+                    ['Vegan']
+                )]),
+            new Day('Donnerstag', '10.12.2020', [
+                new Meal(
+                    'Gebratenes Putenschnitzel an Erbsen & Möhren in Petersilienrahm dazu Dampfkartoffeln',
+                    '5,60€ 3,40€',
+                    ['am', 'aw', 'uw'],
+                    ['Geflügel']
+                ),
+                new Meal(
+                    'Bunte Gnocchipfanne an fruchtiger Tomatensauce, Rucola, Kirschtomaten und Parmesan',
+                    '4,50€',
+                    ['am', 'ae', '2', 'aw', 'uw'],
+                    ['Vegetarisch']
+                )]),
+            new Day('Freitag', '11.12.2020', [
+                new Meal(
+                    'Gebratene Currywurst mit Pommes frites',
+                    '3,50€ 2,10€',
+                    [],
+                    ['Schwein']
+                ),
+                new Meal(
+                    'Farfalle an frischer Champignonsahnesauce, Parmesan und Salatbeilage',
+                    '4,00€ 2,40€',
+                    ['am', 'ae', '2', 'au'],
+                    ['Vegetarisch']
+                )]),
         ]
+        )
     )
 });
 

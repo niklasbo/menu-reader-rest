@@ -5,7 +5,7 @@ const fs = require('fs')
 const stream = require('stream')
 const tmp = require('tmp');
 const ocr = require('./ocr')
-const { ocrResultsToObjects } = require('./ocr-converter')
+const { ocrResultsToWeekDaysAndMeals } = require('./ocr-converter')
 
 const app = express()
 const port = process.env.PORT || 5000
@@ -57,7 +57,7 @@ app.listen(port, () => {
 })
 
 async function handleOcr() {
-    const weeknum = moment().week()
+    const weeknum = moment().locale('de').week()
     console.log(weeknum)
     try {
         const jpegImageAsBase64String = await getImageOfWeeknum(weeknum)
@@ -67,9 +67,10 @@ async function handleOcr() {
         console.log(filepathOfImage)
 
         const values = await ocr.imageToText(filepathOfImage)
-        console.log(values)
+        console.log(values.length)
 
-        const mealObjects = ocrResultsToObjects(values)
+        const mealObjects = ocrResultsToWeekDaysAndMeals(weeknum, values)
+        console.log(mealObjects)
 
     } catch (err) {
         console.log(err)

@@ -1,9 +1,12 @@
-const { Meal } = require("./meal")
+const { getMondayPlusXDateOfWeeknum } = require("./date-utils");
+const { Meal, Week, Day } = require("./models")
 
 module.exports = {
-    ocrResultsToObjects: function ocrResultsToObjects(results) {
-        const meals = []
+    ocrResultsToWeekDaysAndMeals: function ocrResultsToWeekDaysAndMeals(weeknum, results) {
+        const days = []
+        var dayCounter = 0
         results.forEach(day => {
+            const meals = []
             const noZeroPrices = removeZeroPrice(day)
             const mealsRaw = splitMultipleMealsOnDay(noZeroPrices)
 
@@ -22,9 +25,11 @@ module.exports = {
                 //console.log('Type: ' + middleParts.types)
                 meals.push(new Meal(title.trim(), price.trim(), middleParts.furtherInformation, middleParts.types))
             });
+            const dayDetails = getMondayPlusXDateOfWeeknum(weeknum, dayCounter)
+            days.push(new Day(dayDetails.day, dayDetails.date, meals))
+            dayCounter++
         });
-
-        return meals;
+        return new Week(weeknum, days)
     }
 }
 
