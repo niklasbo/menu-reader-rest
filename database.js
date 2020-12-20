@@ -34,6 +34,9 @@ const WeekDayMealSchema = new mongoose.Schema({
 }, { collection: mongodbCollection });
 
 const WeeknumImage = mongoose.model('WeeknumImage', WeeknumImageSchema)
+const Day = mongoose.model('Day', DaySchema)
+const Meal = mongoose.model('Meal', MealSchema)
+const WeekDayMeal = mongoose.model('WeekDayMeal', WeekDayMealSchema)
 
 
 mongoose.connect(mongodbConnectionString, {
@@ -56,4 +59,17 @@ async function getImageOfWeeknum(weeknumToRead) {
     throw new Error('No results returned, is this weeknum already in database?')
 }
 
+async function saveWeekDayMeal(weekDayMeal) {
+    weekDayMeal.save(function (err) {
+        if (err) {
+            throw err
+        }
+        console.log('Weeknum ' + weekDayMeal.weeknum + ' saved!')
+    });
+}
+
 exports.getImageOfWeeknum = getImageOfWeeknum
+exports.saveWeekDayMeal = saveWeekDayMeal
+exports.WeekDayMeal = WeekDayMeal
+exports.Day = Day
+exports.Meal = Meal

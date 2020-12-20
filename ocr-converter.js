@@ -1,8 +1,8 @@
+const { WeekDayMeal, Meal, Day } = require("./database");
 const { getMondayPlusXDateOfWeeknum } = require("./date-utils");
-const { Meal, Week, Day } = require("./models")
 
 module.exports = {
-    ocrResultsToWeekDaysAndMeals: function ocrResultsToWeekDaysAndMeals(weeknum, results) {
+    ocrResultsToWeekDayMeal: function ocrResultsToWeekDayMeal(weeknum, results) {
         const days = []
         var dayCounter = 0
         results.forEach(day => {
@@ -29,7 +29,7 @@ module.exports = {
             days.push(new Day(dayDetails.day, dayDetails.date, meals))
             dayCounter++
         });
-        return new Week(weeknum, days)
+        return new WeekDayMeal(weeknum, days)
     }
 }
 

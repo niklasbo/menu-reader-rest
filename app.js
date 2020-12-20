@@ -4,8 +4,8 @@ const fs = require('fs')
 const stream = require('stream')
 const tmp = require('tmp');
 const ocr = require('./ocr')
-const { ocrResultsToWeekDaysAndMeals } = require('./ocr-converter');
-const { getImageOfWeeknum } = require('./database');
+const { ocrResultsToWeekDayMeal } = require('./ocr-converter');
+const { getImageOfWeeknum, saveWeekDayMeal } = require('./database');
 
 const app = express()
 const port = process.env.PORT || 5000
@@ -41,9 +41,10 @@ async function handleOcr() {
         const values = await ocr.imageToText(filepathOfImage)
         console.log(values.length)
 
-        const mealObjects = ocrResultsToWeekDaysAndMeals(weeknum, values)
-        console.log(mealObjects)
+        const weekDayMealObject = ocrResultsToWeekDayMeal(weeknum, values)
+        console.log(weekDayMealObject)
 
+        await saveWeekDayMeal(weekDayMealObject)
     } catch (err) {
         console.log(err)
     }
