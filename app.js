@@ -5,19 +5,46 @@ const stream = require('stream')
 const tmp = require('tmp');
 const ocr = require('./ocr')
 const { ocrResultsToWeekDayMeal } = require('./ocr-converter');
-const { getImageOfWeeknum, saveWeekDayMeal } = require('./database');
+const { getImageOfWeeknum, saveWeekDayMeal, getWeekDayMealOfWeeknum } = require('./database');
+const { getCurrentWeeknum } = require('./date-utils');
 
 const app = express()
 const port = process.env.PORT || 5000
+const simpleWeekDayMealCache = new WeakMap()
 
 app.get('/', (req, res) => {
     res.send('online')
 })
 
-app.get('/ocr', (req, res) => {
+app.get('/current-week', async (req, res) => {
+    const weeknum = getCurrentWeeknum()
+    if (simpleWeekDayMealCache.has(weeknum)) {
+        res.status(200).send(simpleWeekDayMealCache.get(weeknum))
+    } else {
+        const thisWeek = await getWeekDayMealOfWeeknum(weeknum)
+        simpleWeekDayMealCache.set(weeknum, thisWeek)
+        res.status(200).send(thisWeek)
+    }
+})
+
+app.get('/week/:weekId', async (req, res) => {
+    const weeknum = req.params.weekId
+    if (weeknum === undefined || typeof weeknum !== 'number') {
+        res.status(400).send('Path parameter weekId is not given or a number. Given: ' + weeknum + ' Type: ' + typeof weeknum)
+    }
+    if (simpleWeekDayMealCache.has(weeknum)) {
+        res.status(200).send(simpleWeekDayMealCache.get(weeknum))
+    } else {
+        const weekDayMeal = await getWeekDayMealOfWeeknum(weeknum)
+        simpleWeekDayMealCache.set(weeknum, weekDayMeal)
+        res.status(200).send(weekDayMeal)
+    }
+})
+
+app.get('/ocr', async (req, res) => {
     try {
-        handleOcr()
-        res.status(200).send('accepted')
+        resultObject = await handleOcr()
+        res.status(200).send(resultObject)
     } catch (error) {
         console.log(error)
         res.status(500).send(error)
@@ -29,7 +56,7 @@ app.listen(port, () => {
 })
 
 async function handleOcr() {
-    const weeknum = moment().locale('de').week()
+    const weeknum = getCurrentWeeknum()
     console.log(weeknum)
     try {
         const jpegImageAsBase64String = await getImageOfWeeknum(weeknum)
@@ -45,6 +72,7 @@ async function handleOcr() {
         console.log(weekDayMealObject)
 
         await saveWeekDayMeal(weekDayMealObject)
+        return weekDayMealObject
     } catch (err) {
         console.log(err)
     }
