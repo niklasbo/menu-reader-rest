@@ -32,9 +32,9 @@ app.get('/current-week', async (req, res) => {
 })
 
 app.get('/week/:weekId', async (req, res) => {
-    const weeknum = req.params.weekId
-    if (weeknum === undefined || typeof weeknum !== 'number') {
-        res.status(400).send('Path parameter weekId is not given or a number. Given: ' + weeknum + ' Type: ' + typeof weeknum)
+    const weeknum = parseInt(req.params.weekId)
+    if (isNaN(weeknum)) {
+        res.status(400).send('Path parameter weekId is not given or a not a number. Given: ' + req.params.weekId + ' Type: ' + typeof req.params.weekId)
     }
     if (simpleWeekDayMealCache.has(weeknum)) {
         res.status(200).send(simpleWeekDayMealCache.get(weeknum))
