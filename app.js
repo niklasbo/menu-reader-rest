@@ -21,9 +21,13 @@ app.get('/current-week', async (req, res) => {
     if (simpleWeekDayMealCache.has(weeknum)) {
         res.status(200).send(simpleWeekDayMealCache.get(weeknum))
     } else {
-        const thisWeek = await getWeekDayMealOfWeeknum(weeknum)
-        simpleWeekDayMealCache.set(weeknum, thisWeek)
-        res.status(200).send(thisWeek)
+        try {
+            const thisWeek = await getWeekDayMealOfWeeknum(weeknum)
+            simpleWeekDayMealCache.set(weeknum, thisWeek)
+            res.status(200).send(thisWeek)
+        } catch (err) {
+            res.status(500).send(err)
+        }
     }
 })
 
@@ -35,9 +39,13 @@ app.get('/week/:weekId', async (req, res) => {
     if (simpleWeekDayMealCache.has(weeknum)) {
         res.status(200).send(simpleWeekDayMealCache.get(weeknum))
     } else {
-        const weekDayMeal = await getWeekDayMealOfWeeknum(weeknum)
-        simpleWeekDayMealCache.set(weeknum, weekDayMeal)
-        res.status(200).send(weekDayMeal)
+        try {
+            const weekDayMeal = await getWeekDayMealOfWeeknum(weeknum)
+            simpleWeekDayMealCache.set(weeknum, weekDayMeal)
+            res.status(200).send(weekDayMeal)
+        } catch (err) {
+            res.status(500).send(err)
+        }
     }
 })
 
