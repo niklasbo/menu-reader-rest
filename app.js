@@ -26,7 +26,7 @@ app.get('/current-week', async (req, res) => {
             simpleWeekDayMealCache.set(weeknum, thisWeek)
             res.status(200).send(thisWeek)
         } catch (err) {
-            res.status(500).send(err)
+            res.status(500).send(err.message)
         }
     }
 })
@@ -44,7 +44,7 @@ app.get('/week/:weekId', async (req, res) => {
             simpleWeekDayMealCache.set(weeknum, weekDayMeal)
             res.status(200).send(weekDayMeal)
         } catch (err) {
-            res.status(500).send(err)
+            res.status(500).send(err.message)
         }
     }
 })
@@ -53,9 +53,9 @@ app.get('/ocr', async (req, res) => {
     try {
         resultObject = await handleOcr()
         res.status(200).send(resultObject)
-    } catch (error) {
-        console.log(error)
-        res.status(500).send(error)
+    } catch (err) {
+        console.log(err)
+        res.status(500).send(err.message)
     }
 })
 
