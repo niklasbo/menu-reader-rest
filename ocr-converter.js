@@ -23,13 +23,19 @@ module.exports = {
                 //console.log('Price: ' + price.trim())
                 //console.log('Further: ' + middleParts.furtherInformation)
                 //console.log('Type: ' + middleParts.types)
-                meals.push(new Meal(title.trim(), price.trim(), middleParts.furtherInformation, middleParts.types))
+                meals.push(new Meal(
+                    {
+                        title: title.trim(),
+                        price: price.trim(),
+                        furtherInformation: middleParts.furtherInformation,
+                        types: middleParts.types
+                    }))
             });
             const dayDetails = getMondayPlusXDateOfWeeknum(weeknum, dayCounter)
-            days.push(new Day(dayDetails.day, dayDetails.date, meals))
+            days.push(new Day({ day: dayDetails.day, date: dayDetails.date, meals: meals }))
             dayCounter++
         });
-        return new WeekDayMeal(weeknum, days)
+        return new WeekDayMeal({ weeknum: weeknum, days: days })
     }
 }
 

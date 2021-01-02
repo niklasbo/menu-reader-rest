@@ -28,7 +28,7 @@ const MealSchema = new mongoose.Schema({
 
 const DaySchema = new mongoose.Schema({
     day: String,
-    date: Date,
+    date: String,
     meals: [MealSchema]
 }, { collection: undefined });
 

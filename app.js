@@ -31,10 +31,10 @@ app.get('/current-week', async (req, res) => {
     }
 })
 
-app.get('/week/:weekId', async (req, res) => {
-    const weeknum = parseInt(req.params.weekId)
+app.get('/week/:weeknum', async (req, res) => {
+    const weeknum = parseInt(req.params.weeknum)
     if (isNaN(weeknum)) {
-        res.status(400).send('Path parameter weekId is not given or a not a number. Given: ' + req.params.weekId + ' Type: ' + typeof req.params.weekId)
+        res.status(400).send('Path parameter weeknum is not a number. Given: "' + req.params.weeknum + '" Type: ' + typeof req.params.weeknum)
     }
     if (simpleWeekDayMealCache.has(weeknum)) {
         res.status(200).send(simpleWeekDayMealCache.get(weeknum))
@@ -59,12 +59,25 @@ app.get('/ocr', async (req, res) => {
     }
 })
 
+app.get('/ocr/:weeknum', async (req, res) => {
+    const weeknum = parseInt(req.params.weeknum)
+    if (isNaN(weeknum)) {
+        res.status(400).send('Path parameter weeknum is not a number. Given: "' + req.params.weeknum + '" Type: ' + typeof req.params.weeknum)
+    }
+    try {
+        resultObject = await handleOcr(weeknum)
+        res.status(200).send(resultObject)
+    } catch (err) {
+        console.log(err)
+        res.status(500).send(err.message)
+    }
+})
+
 app.listen(port, () => {
     console.log(`Listening on ${port}`)
 })
 
-async function handleOcr() {
-    const weeknum = getCurrentWeeknum()
+async function handleOcr(weeknum = getCurrentWeeknum()) {
     console.log(weeknum)
     try {
         const jpegImageAsBase64String = await getImageOfWeeknum(weeknum)
