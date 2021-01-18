@@ -7,10 +7,13 @@ const ocr = require('./ocr')
 const { ocrResultsToWeekDayMeal } = require('./ocr-converter');
 const { getImageOfWeeknum, saveWeekDayMeal, getWeekDayMealOfWeeknum } = require('./database');
 const { getCurrentWeeknum } = require('./date-utils');
+const { extendTimeoutMiddleware } = require('./extend-timeout-middleware');
 
 const app = express()
 const port = process.env.PORT || 5000
 const simpleWeekDayMealCache = new WeakMap()
+
+app.use(extendTimeoutMiddleware)
 
 app.get('/', (req, res) => {
     res.send('online')
