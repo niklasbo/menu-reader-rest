@@ -55,7 +55,11 @@ app.get('/week/:weeknum', async (req, res) => {
 app.get('/ocr', async (req, res) => {
     try {
         resultObject = await handleOcr()
-        res.status(200).send(resultObject)
+        if (!res.headersSent) {
+            res.status(200).send(resultObject)
+        } else {
+            res.write(resultObject)
+        }
     } catch (err) {
         console.log(err)
         res.status(500).send(err.message)
@@ -69,7 +73,11 @@ app.get('/ocr/:weeknum', async (req, res) => {
     }
     try {
         resultObject = await handleOcr(weeknum)
-        res.status(200).send(resultObject)
+        if (!res.headersSent) {
+            res.status(200).send(resultObject)
+        } else {
+            res.send(resultObject)
+        }
     } catch (err) {
         console.log(err)
         res.status(500).send(err.message)
