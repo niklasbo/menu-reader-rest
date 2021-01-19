@@ -14,11 +14,6 @@ if (mongodbWeekDayMealCollection.length == 0) {
     throw new Error('Set Environment Variable MONGODB_WEEKDAYMEAL_COLLECTION')
 }
 
-const WeeknumImageSchema = new mongoose.Schema({
-    weeknum: Number,
-    jpegImageAsBase64String: String
-}, { collection: mongodbWeeknumImageCollection });
-
 const MealSchema = new mongoose.Schema({
     title: String,
     price: String,
@@ -37,11 +32,9 @@ const WeekDayMealSchema = new mongoose.Schema({
     days: [DaySchema],
 }, { collection: mongodbWeekDayMealCollection });
 
-const WeeknumImage = mongoose.model('WeeknumImage', WeeknumImageSchema)
 const Day = mongoose.model('Day', DaySchema)
 const Meal = mongoose.model('Meal', MealSchema)
 const WeekDayMeal = mongoose.model('WeekDayMeal', WeekDayMealSchema)
-
 
 mongoose.connect(mongodbConnectionString, {
     useNewUrlParser: true,
@@ -55,23 +48,6 @@ mongoose.connect(mongodbConnectionString, {
     }
 })
 
-async function getImageOfWeeknum(weeknumToRead) {
-    const result = await WeeknumImage.findOne({ weeknum: weeknumToRead }).exec()
-    if (result != null) {
-        return result.jpegImageAsBase64String
-    }
-    throw new Error('No results returned, is this WeeknumImage already in database?')
-}
-
-async function saveWeekDayMeal(weekDayMeal) {
-    weekDayMeal.save(function (err) {
-        if (err) {
-            throw err
-        }
-        console.log('Weeknum ' + weekDayMeal.weeknum + ' saved!')
-    });
-}
-
 async function getWeekDayMealOfWeeknum(weeknumToRead) {
     const result = await WeekDayMeal.findOne({ weeknum: weeknumToRead }).exec()
     if (result != null) {
@@ -80,8 +56,6 @@ async function getWeekDayMealOfWeeknum(weeknumToRead) {
     throw new Error('No results returned, is this WeekDayMeal as object in database?')
 }
 
-exports.getImageOfWeeknum = getImageOfWeeknum
-exports.saveWeekDayMeal = saveWeekDayMeal
 exports.getWeekDayMealOfWeeknum = getWeekDayMealOfWeeknum
 exports.WeekDayMeal = WeekDayMeal
 exports.Day = Day

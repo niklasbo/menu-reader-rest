@@ -1,18 +1,14 @@
 {
-  "name": "image-ocr-service",
+  "name": "menu-reader-rest-service",
   "version": "1.0.0",
-  "description": "Menu Reader image to text service",
+  "description": "Menu Reader rest service",
   "engines": {
     "node": "12.x"
   },
   "main": "app.js",
   "dependencies": {
     "express": "^4.17.1",
-    "fs": "0.0.1-security",
-    "moment": "^2.29.1",
-    "mongoose": "^5.10.17",
-    "tesseract.js": "^2.1.4",
-    "tmp": "^0.2.1"
+    "mongoose": "^5.10.17"
   },
   "devDependencies": {
     "ava": "^3.14.0",
