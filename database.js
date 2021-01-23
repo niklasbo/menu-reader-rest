@@ -1,14 +1,10 @@
 const mongoose = require('mongoose')
 
 const mongodbConnectionString = process.env.MONGODB_CONNECTION_STRING || ''
-const mongodbWeeknumImageCollection = process.env.MONGODB_WEEKNUM_IMAGE_COLLECTION || ''
 const mongodbWeekDayMealCollection = process.env.MONGODB_WEEKDAYMEAL_COLLECTION || ''
 
 if (mongodbConnectionString.length == 0) {
     throw new Error('Set Environment Variable MONGODB_CONNECTION_STRING')
-}
-if (mongodbWeeknumImageCollection.length == 0) {
-    throw new Error('Set Environment Variable MONGODB_WEEKNUM_IMAGE_COLLECTION')
 }
 if (mongodbWeekDayMealCollection.length == 0) {
     throw new Error('Set Environment Variable MONGODB_WEEKDAYMEAL_COLLECTION')
@@ -53,7 +49,7 @@ async function getWeekDayMealOfWeeknum(weeknumToRead) {
     if (result != null) {
         return result
     }
-    throw new Error('No results returned, is this WeekDayMeal as object in database?')
+    throw new Error(`No results returned, is this WeekDayMeal (weeknum = ${weeknumToRead}) as object in database?`)
 }
 
 exports.getWeekDayMealOfWeeknum = getWeekDayMealOfWeeknum

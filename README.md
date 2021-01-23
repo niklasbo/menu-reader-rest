@@ -1,4 +1,4 @@
-# menu-reader-rest-service
+# Menu Reader: REST Service
 
 Handles Client-REST-Calls
 
