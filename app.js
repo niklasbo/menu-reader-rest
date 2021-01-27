@@ -1,6 +1,6 @@
 const express = require('express')
 const { getWeekDayMealOfWeeknum } = require('./database');
-const { getCurrentWeeknum } = require('./date-utils');
+const { getCurrentWeeknum, getTodayFormatted } = require('./date-utils');
 const { mapMongoWeekDayMealToArrayOfDays } = require('./model-mapper');
 
 const app = express()
@@ -11,15 +11,31 @@ app.get('/', (req, res) => {
     res.send('online')
 })
 
+app.get('/today', async (req, res) => {
+    const weeknum = getCurrentWeeknum()
+    const todayFormatted = getTodayFormatted()
+    if (!simpleWeekDayMealCache.has(weeknum)) {
+        try {
+            await loadWeekInCache(weeknum)
+        } catch (err) {
+            console.log(err)
+            res.status(500).send(err.message)
+        }
+    }
+    res.status(200).send(findDayObjectInCache(weeknum, todayFormatted))
+})
+
+function findDayObjectInCache(weeknum, formattedDateToFind) {
+    return simpleWeekDayMealCache.get(weeknum).find(day => day.date === formattedDateToFind);
+}
+
 app.get('/current-week', async (req, res) => {
     const weeknum = getCurrentWeeknum()
     if (simpleWeekDayMealCache.has(weeknum)) {
         res.status(200).send(simpleWeekDayMealCache.get(weeknum))
     } else {
         try {
-            const mongoWeekDayMeal = await getWeekDayMealOfWeeknum(weeknum)
-            const thisWeek = mapMongoWeekDayMealToArrayOfDays(mongoWeekDayMeal)
-            simpleWeekDayMealCache.set(weeknum, thisWeek)
+            const thisWeek = await loadWeekInCache(weeknum)
             res.status(200).send(thisWeek)
         } catch (err) {
             console.log(err)
@@ -37,9 +53,7 @@ app.get('/week/:weeknum', async (req, res) => {
         res.status(200).send(simpleWeekDayMealCache.get(weeknum))
     } else {
         try {
-            const weekDayMeal = await getWeekDayMealOfWeeknum(weeknum)
-            const mappedDays = mapMongoWeekDayMealToArrayOfDays(weekDayMeal)
-            simpleWeekDayMealCache.set(weeknum, mappedDays)
+            const mappedDays = await loadWeekInCache(weeknum)
             res.status(200).send(mappedDays)
         } catch (err) {
             console.log(err)
@@ -47,6 +61,13 @@ app.get('/week/:weeknum', async (req, res) => {
         }
     }
 })
+
+async function loadWeekInCache(weeknum) {
+    const mongoWeekDayMeal = await getWeekDayMealOfWeeknum(weeknum)
+    const mappedWeek = mapMongoWeekDayMealToArrayOfDays(mongoWeekDayMeal)
+    simpleWeekDayMealCache.set(weeknum, mappedWeek)
+    return mappedWeek
+}
 
 app.listen(port, () => {
     console.log(`Listening on ${port}`)
