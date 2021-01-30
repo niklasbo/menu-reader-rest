@@ -2,6 +2,7 @@ const express = require('express')
 const { getWeekDayMealOfWeeknum } = require('./database');
 const { getCurrentWeeknum, getTodayFormatted, getTodayDayNameFormatted } = require('./date-utils');
 const { mapMongoWeekDayMealToArrayOfDays } = require('./model-mapper');
+const { Day } = require('./models');
 const path = require('path');
 
 const app = express()
@@ -18,7 +19,7 @@ app.get('/', async (req, res) => {
             await loadWeekInCache(weeknum)
         } catch (err) {
             console.log(err)
-            res.render('index', { 'mealsToday': [new Day(getTodayDayNameFormatted(), todayFormatted, [])] })
+            res.render('index', { 'mealsToday': createEmptyTodayArray() })
         }
     }
     res.render('index', { 'mealsToday': findDayObjectInCache(weeknum, todayFormatted) })
@@ -39,7 +40,12 @@ app.get('/today', async (req, res) => {
 })
 
 function findDayObjectInCache(weeknum, formattedDateToFind) {
-    return simpleWeekDayMealCache.get(weeknum).find(day => day.date === formattedDateToFind);
+    const found = simpleWeekDayMealCache.get(weeknum).find(day => day.date === formattedDateToFind)
+    return found !== undefined ? found : createEmptyTodayArray()
+}
+
+function createEmptyTodayArray() {
+    return new Day(getTodayDayNameFormatted(), getTodayFormatted(), [])
 }
 
 app.get('/current-week', async (req, res) => {

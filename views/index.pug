@@ -12,7 +12,7 @@ html
         div(class='jumbotron text-center' style='padding:2')
             h1(class='display-4' style='font-size:3rem') Mensa Reader
             h4() Heutiges Angebot am #{mealsToday.day} den #{mealsToday.date}
-        div(class='col-sm-8')
+        div(class='col-sm-8 mx-auto')
             div(class='card-deck' style='margin-bottom:2rem')
                 each meal, _ in mealsToday.meals
                     div(class='card bg-light')
