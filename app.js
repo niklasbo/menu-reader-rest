@@ -4,6 +4,7 @@ const { getCurrentWeeknum, getTodayFormatted, getTodayDayNameFormatted } = requi
 const { mapMongoWeekDayMealToArrayOfDays } = require('./model-mapper');
 const { Day } = require('./models');
 const path = require('path');
+const { writeStatisticPoint } = require('./analytics');
 
 const app = express()
 app.set('views', path.join(__dirname, 'views'));
@@ -12,6 +13,7 @@ const port = process.env.PORT || 7000
 const simpleWeekDayMealCache = new Map()
 
 app.get('/', async (req, res) => {
+    writeStatisticPoint('/')
     const weeknum = getCurrentWeeknum()
     const todayFormatted = getTodayFormatted()
     if (!simpleWeekDayMealCache.has(weeknum)) {
@@ -26,6 +28,7 @@ app.get('/', async (req, res) => {
 })
 
 app.get('/today', async (req, res) => {
+    writeStatisticPoint('/today')
     const weeknum = getCurrentWeeknum()
     const todayFormatted = getTodayFormatted()
     if (!simpleWeekDayMealCache.has(weeknum)) {
@@ -49,6 +52,7 @@ function createEmptyTodayArray() {
 }
 
 app.get('/current-week', async (req, res) => {
+    writeStatisticPoint('/current-week')
     const weeknum = getCurrentWeeknum()
     if (simpleWeekDayMealCache.has(weeknum)) {
         res.status(200).send(simpleWeekDayMealCache.get(weeknum))
@@ -64,6 +68,7 @@ app.get('/current-week', async (req, res) => {
 })
 
 app.get('/week/:weeknum', async (req, res) => {
+    writeStatisticPoint('/week/:weeknum')
     const weeknum = parseInt(req.params.weeknum)
     if (isNaN(weeknum)) {
         res.status(400).send('Path parameter weeknum is not a number. Given: "' + req.params.weeknum + '" Type: ' + typeof req.params.weeknum)
