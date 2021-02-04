@@ -20,11 +20,14 @@ if (influxDbBucket.length == 0) {
 const client = new InfluxDB({ url: influxDbUrl, token: influxDbToken })
 
 module.exports = {
-    writeStatisticPoint: async function writeStatisticPoint(clickedPath) {
+    writeStatisticPoint: async function writeStatisticPoint(clickedPath, userAgent) {
         const writeApi = client.getWriteApi(influxDbOrganization, influxDbBucket)
         writeApi.useDefaultTags({ service: 'rest' })
 
-        const point = new Point('clicks').tag('path', clickedPath).intField('click', 1)
+        const point = new Point('clicks')
+            .tag('path', clickedPath)
+            .tag('userAgent', userAgent === undefined || userAgent.trim().length === '' ? 'none' : userAgent)
+            .intField('click', 1)
         writeApi.writePoint(point)
         writeApi
             .close()
