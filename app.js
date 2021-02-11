@@ -5,6 +5,7 @@ const { mapMongoWeekDayMealToArrayOfDays } = require('./model-mapper');
 const { Day } = require('./models');
 const path = require('path');
 const { writeStatisticPoint } = require('./analytics');
+const { removeOldDays } = require('./widget-full-utils');
 
 const app = express()
 app.set('views', path.join(__dirname, 'views'));
@@ -71,14 +72,14 @@ app.get('/current-week-full', async (req, res) => {
     writeStatisticPoint('/current-week-full', req.get('user-agent'))
     const weeknum = getCurrentWeeknum()
     if (simpleWeekDayMealCache.has(weeknum)) {
-        res.status(200).send({status: "success", weeknum: weeknum, data: simpleWeekDayMealCache.get(weeknum)})
+        res.status(200).send({ status: "success", weeknum: weeknum, data: removeOldDays(simpleWeekDayMealCache.get(weeknum)) })
     } else {
         try {
             const thisWeek = await loadWeekInCache(weeknum)
-            res.status(200).send({status: "success", weeknum: weeknum, data: thisWeek})
+            res.status(200).send({ status: "success", weeknum: weeknum, data: removeOldDays(thisWeek) })
         } catch (err) {
             console.log(err)
-            res.status(500).send({status: "error", weeknum: weeknum, data: err.message})
+            res.status(500).send({ status: "error", weeknum: weeknum, data: err.message })
         }
     }
 })
