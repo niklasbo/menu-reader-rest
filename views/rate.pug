@@ -1,0 +1,46 @@
+html
+    head
+        title Mensa Reader
+        meta(name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no")
+        link(
+            rel='stylesheet'
+            href='https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css'
+            integrity='sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l'
+            crossorigin='anonymous'
+        )
+        link(
+            rel="stylesheet" 
+            href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.0/font/bootstrap-icons.css"
+        )
+        style.
+            .glow-button:hover {
+                box-shadow: 0 5px 15px rgba(145, 92, 182, .4);
+            }
+    body
+        div(class='jumbotron text-center' style='padding:2')
+            h1(class='display-4' style='font-size:3rem') Mensa Reader
+            h4 Bewerte dein heutiges Essen
+        div(class='col-sm-8 mx-auto')
+            div(class='card-deck' style='margin-bottom:2rem')
+                if menuTitle !== ''
+                    div(class='card bg-light')
+                        div(class='card-header' style='min-height:5rem')
+                            h5(class='text-center')= mealTitle
+                        div(class='card-body')
+                            div
+                                span Klick auf die Anzahl an Sternen, die du dem Essen geben möchtest. Deine Bewertung wird direkt gespeichert.
+                                br
+                                br
+                                div(class="col flex")
+                                    - for (var x = 5; x > 0; x--)
+                                        a(href=`/vote?date=${date}&meal=${mealIndex}&stars=${x}`)
+                                            div(class='row glow-button my-3 py-2')
+                                                - for (var y = 1; y <= x; y++)
+                                                    i(class='bi bi-star-fill' style="color: #ffd857; font-size: 2rem")
+                else
+                    div(class='card bg-secondary text-white')
+                        div(class='card-header')
+                            h5 Da ging etwas schief.
+                            a(href='/') Zurück zur Übersicht
+            div
+                p(class='small') Du willst eine App oder einen weiteren Service mit diesen Mensadaten aufbauen? Dann schaue dir mal die Routen /today, /current-week, /current-week-full und /week/:weeknumber an.

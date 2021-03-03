@@ -8,13 +8,17 @@ html
             integrity='sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l'
             crossorigin='anonymous'
         )
+        link(
+            rel="stylesheet" 
+            href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.0/font/bootstrap-icons.css"
+        )
     body
         div(class='jumbotron text-center' style='padding:2')
             h1(class='display-4' style='font-size:3rem') Mensa Reader
-            h4() Heutiges Angebot am #{mealsToday.day} den #{mealsToday.date}
+            h4 Heutiges Angebot am #{mealsToday.day} den #{mealsToday.date}
         div(class='col-sm-8 mx-auto')
             div(class='card-deck' style='margin-bottom:2rem')
-                each meal, _ in mealsToday.meals
+                each meal, index in mealsToday.meals
                     div(class='card bg-light')
                         div(class='card-header' style='min-height:5rem')
                             h5(class='text-center')= meal.title
@@ -32,6 +36,18 @@ html
                                     each info, _ in meal.furtherInformation
                                         | #{info}
                                         |
+                            div
+                                span Bewertung
+                                br
+                                each val in [1, 2, 3, 4, 5]
+                                    if meal.rating >= val
+                                        i(class='bi bi-star-fill' style='color: #ffd857')
+                                    else if meal.rating >= (val - 0.5)
+                                        i(class='bi bi-star-half')
+                                    else
+                                        i(class='bi bi-star')
+                                br
+                                a(href=`/rate?date=${mealsToday.date}&meal=${index}`) Jetzt bewerten!
                             div(class='text-right font-weight-bold' style='font-size:1.1rem')
                                 p= meal.price
                 else

@@ -28,6 +28,34 @@ app.get('/', async (req, res) => {
     res.render('index', { 'mealsToday': findDayObjectInCache(weeknum, todayFormatted) })
 })
 
+app.get('/rate', async (req, res) => {
+    writeStatisticPoint('/rate', req.get('user-agent'))
+    const weeknum = getCurrentWeeknum()
+    const date = req.query.date
+    const mealIndex = req.query.meal
+    if (!simpleWeekDayMealCache.has(weeknum)) {
+        try {
+            await loadWeekInCache(weeknum)
+        } catch (err) {
+            console.log(err)
+            res.render('rate', { 'date': date, 'mealIndex': mealIndex, 'mealTitle': findMealTitleInCache(weeknum, date, mealIndex)})
+        }
+    }
+    res.render('rate', { 'date': date, 'mealIndex': mealIndex, 'mealTitle': findMealTitleInCache(weeknum, date, mealIndex)})
+})
+
+app.get('/vote', async (req, res) => {
+    writeStatisticPoint('/vote', req.get('user-agent'))
+    const weeknum = getCurrentWeeknum()
+    const date = req.query.date
+    const mealIndex = req.query.meal
+    const stars = req.query.stars
+    if (date !== undefined && mealIndex !== undefined && stars !== undefined) {
+        //todo find meal and update stars
+    }
+    res.redirect('/')
+})
+
 app.get('/today', async (req, res) => {
     writeStatisticPoint('/today', req.get('user-agent'))
     const weeknum = getCurrentWeeknum()
@@ -42,6 +70,14 @@ app.get('/today', async (req, res) => {
     }
     res.status(200).send(findDayObjectInCache(weeknum, todayFormatted))
 })
+
+function findMealTitleInCache(weeknum, formattedDate, mealIndexToFind) {
+    const dayObj = findDayObjectInCache(weeknum, formattedDate)
+    if (mealIndexToFind >= 0 && mealIndexToFind < dayObj.meals.length) {
+        return dayObj.meals[mealIndexToFind].title
+    }
+    return undefined
+}
 
 function findDayObjectInCache(weeknum, formattedDateToFind) {
     const found = simpleWeekDayMealCache.get(weeknum).find(day => day.date === formattedDateToFind)
