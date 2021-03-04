@@ -1,8 +1,8 @@
 const express = require('express')
-const { getWeekDayMealOfWeeknum } = require('./database');
+const { getWeekDayMealOfWeeknum, getMealRating, addMealRating } = require('./database');
 const { getCurrentWeeknum, getTodayFormatted, getTodayDayNameFormatted } = require('./date-utils');
 const { mapMongoWeekDayMealToArrayOfDays } = require('./model-mapper');
-const { Day } = require('./models');
+const { Day, MealWithRating } = require('./models');
 const path = require('path');
 const { writeStatisticPoint } = require('./analytics');
 const { removeOldDays } = require('./widget-full-utils');
@@ -25,33 +25,48 @@ app.get('/', async (req, res) => {
             res.render('index', { 'mealsToday': createEmptyTodayArray() })
         }
     }
-    res.render('index', { 'mealsToday': findDayObjectInCache(weeknum, todayFormatted) })
+    dayObj = findDayObjectInCache(weeknum, todayFormatted)
+    mealsWithRatings = []
+    for (const element of dayObj.meals) {
+        rating = await getMealRating(element.title)
+        mealsWithRatings.push(new MealWithRating(element.title, element.price, element.furtherInformation, element.types, rating))
+    }
+    dayObj.meals = mealsWithRatings
+    res.render('index', { 'mealsToday': dayObj })
 })
 
 app.get('/rate', async (req, res) => {
     writeStatisticPoint('/rate', req.get('user-agent'))
-    const weeknum = getCurrentWeeknum()
     const date = req.query.date
     const mealIndex = req.query.meal
+    if (date == undefined || mealIndex == undefined) {
+        res.redirect('/')
+        return
+    }
+    const weeknum = getCurrentWeeknum()
     if (!simpleWeekDayMealCache.has(weeknum)) {
         try {
             await loadWeekInCache(weeknum)
         } catch (err) {
             console.log(err)
-            res.render('rate', { 'date': date, 'mealIndex': mealIndex, 'mealTitle': findMealTitleInCache(weeknum, date, mealIndex)})
+            res.render('rate', { 'date': date, 'mealIndex': mealIndex, 'mealTitle': findMealTitleInCache(weeknum, date, mealIndex) })
         }
     }
-    res.render('rate', { 'date': date, 'mealIndex': mealIndex, 'mealTitle': findMealTitleInCache(weeknum, date, mealIndex)})
+    res.render('rate', { 'date': date, 'mealIndex': mealIndex, 'mealTitle': findMealTitleInCache(weeknum, date, mealIndex) })
 })
 
 app.get('/vote', async (req, res) => {
     writeStatisticPoint('/vote', req.get('user-agent'))
-    const weeknum = getCurrentWeeknum()
     const date = req.query.date
     const mealIndex = req.query.meal
     const stars = req.query.stars
-    if (date !== undefined && mealIndex !== undefined && stars !== undefined) {
-        //todo find meal and update stars
+    if (date !== undefined && mealIndex !== undefined && stars !== undefined && parseInt(stars) !== NaN) {
+        const numOfStars = parseInt(stars)
+        if (numOfStars >= 1 && numOfStars <= 5) {
+            const weeknum = getCurrentWeeknum()
+            const title = findMealTitleInCache(weeknum, date, mealIndex)
+            await addMealRating(title, numOfStars)
+        }
     }
     res.redirect('/')
 })

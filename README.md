@@ -5,7 +5,9 @@ Handles Client-REST-Calls
 ## API
 | Path          | Parameter   | Function                           |
 |---------------|-------------|------------------------------------|
-| /             | none        | online check                       |
+| /             | none        | today overview page                |
+| /rate         | date and index | rate a meal page                |
+| /vote         | date, index and stars | vote endpoint            |
 | /current-week | none        | get the data for current week      |
 | /week/:weekId | weekId a number | get the data for given weeknum |
 
@@ -18,3 +20,4 @@ Handles Client-REST-Calls
     
 - MONGODB_CONNECTION_STRING
 - MONGODB_WEEKDAYMEAL_COLLECTION
+- MONGODB_MEAL_RATINGS_COLLECTION
