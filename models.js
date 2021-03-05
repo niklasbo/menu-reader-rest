@@ -17,9 +17,10 @@ class Meal {
 }
 
 class MealWithRating extends Meal {
-    constructor(title, price, furtherInformation, types, rating) {
+    constructor(title, price, furtherInformation, types, rating, rates) {
         super(title, price, furtherInformation, types)
         this.rating = rating
+        this.rates = rates
     }
 }
 

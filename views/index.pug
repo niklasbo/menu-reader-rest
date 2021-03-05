@@ -39,13 +39,16 @@ html
                             div
                                 span Bewertung
                                 br
-                                each val in [1, 2, 3, 4, 5]
-                                    if meal.rating >= (val - 0.15)
-                                        i(class='bi bi-star-fill' style='color: #ffd857; font-size: 1.2rem')
-                                    else if meal.rating >= (val - 0.6)
-                                        i(class='bi bi-star-half' style='color: #ffd857; font-size: 1.2rem')
-                                    else
-                                        i(class='bi bi-star' style='font-size: 1.2rem')
+                                span(title=meal.rating.toFixed(2))
+                                    each val in [1, 2, 3, 4, 5]
+                                        if meal.rating >= (val - 0.15)
+                                            i(class='bi bi-star-fill' style='color: #ffd857; font-size: 1.2rem')
+                                        else if meal.rating >= (val - 0.6)
+                                            i(class='bi bi-star-half' style='color: #ffd857; font-size: 1.2rem')
+                                        else
+                                            i(class='bi bi-star' style='font-size: 1.2rem')
+                                br
+                                span(class='ml-4 font-weight-light small') #{parseInt(meal.rates)} Votes
                                 br
                                 a(href=`/rate?date=${mealsToday.date}&meal=${index}`) Jetzt bewerten!
                             div(class='text-right font-weight-bold' style='font-size:1.1rem')

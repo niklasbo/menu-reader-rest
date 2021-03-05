@@ -67,9 +67,9 @@ async function getMealRating(mealTitleToFind) {
     const normalizedTitle = normalizeTitle(mealTitleToFind)
     const result = await MealRating.findOne({mealTitle: normalizedTitle}).exec()
     if (result != null) {
-        return result.rating
+        return { 'rating': result.rating, 'rates': result.rates }
     }
-    return 0
+    return { 'rating': 0, 'rates': 0 }
 }
 
 async function addMealRating(mealTitleToRate, stars) {

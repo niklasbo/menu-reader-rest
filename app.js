@@ -28,8 +28,8 @@ app.get('/', async (req, res) => {
     dayObj = findDayObjectInCache(weeknum, todayFormatted)
     mealsWithRatings = []
     for (const element of dayObj.meals) {
-        rating = await getMealRating(element.title)
-        mealsWithRatings.push(new MealWithRating(element.title, element.price, element.furtherInformation, element.types, rating))
+        ratingAndRates = await getMealRating(element.title)
+        mealsWithRatings.push(new MealWithRating(element.title, element.price, element.furtherInformation, element.types, ratingAndRates.rating, ratingAndRates.rates))
     }
     dayObj.meals = mealsWithRatings
     res.render('index', { 'mealsToday': dayObj })
