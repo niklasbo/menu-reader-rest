@@ -54,8 +54,14 @@ html
                             div(class='text-right font-weight-bold' style='font-size:1.1rem')
                                 p= meal.price
                 else
-                    div(class='card bg-secondary text-white')
+                    div(class='card bg-light')
                         div(class='card-header')
                             h5 Heute gibt es nichts zu essen.
+                        if rerun
+                            div(class='card-body')
+                                p Du bist der Meinung hier sollte etwas stehen?
+                                a(href=`/rerun` class='glow-button my-3 py-2') Dann drücke hier und starte die Verarbeitung erneut!
+
             div
-                p(class='small') Du willst eine App oder einen weiteren Service mit diesen Mensadaten aufbauen? Dann schaue dir mal die Routen /today, /current-week, /current-week-full und /week/:weeknumber an.
+                p(class='small') Du willst eine App oder einen weiteren Service mit diesen Mensadaten aufbauen? Dann schaue dir mal die Routen /today, /current-week, /current-week-full und /week/:weeknumber an und 
+                    a(href='https://github.com/niklasbo/menu-reader-rest' target='_blank' rel='noopener noreferrer') das Repository.

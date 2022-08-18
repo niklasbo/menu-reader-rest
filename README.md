@@ -2,9 +2,6 @@
 
 Handles Client-REST-Calls
 
-## Archive Note :ledger:
-Due to Covid-19 pandemic this service was archived. Everybody works remotely so there is no need for this anymore.
-
 ## API
 | Path          | Parameter   | Function                           |
 |---------------|-------------|------------------------------------|
@@ -20,7 +17,9 @@ Due to Covid-19 pandemic this service was archived. Everybody works remotely so 
     node app.js
 
 ### Environment Variables 
-    
+
 - MONGODB_CONNECTION_STRING
 - MONGODB_WEEKDAYMEAL_COLLECTION
 - MONGODB_MEAL_RATINGS_COLLECTION
+- PDF_SERVICE_URL
+- OCR_SERVICE_URL
