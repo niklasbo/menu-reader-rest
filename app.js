@@ -42,6 +42,15 @@ app.get('/', async (req, res) => {
             }
             res.render('index', { 'mealsToday': createEmptyTodayArray(), 'rerun': canRerun })
         }
+    } else {
+        dayObj = findDayObjectInCache(weeknum, todayFormatted)
+        mealsWithRatings = []
+        for (const element of dayObj.meals) {
+            ratingAndRates = await getMealRating(element.title)
+            mealsWithRatings.push(new MealWithRating(element.title, element.price, element.furtherInformation, element.types, ratingAndRates.rating, ratingAndRates.rates))
+        }
+        dayObj.meals = mealsWithRatings
+        res.render('index', { 'mealsToday': dayObj, 'rerun': false })
     }
 })
 
